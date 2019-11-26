@@ -1,3 +1,4 @@
+// app shell cache
 const staticCacheName = 'site-static-v1';
 const assets = [
   '/',
@@ -10,8 +11,10 @@ const assets = [
   '/img/dish.png',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://fonts.gstatic.com/s/materialicons/v48/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2'
-
 ];
+
+// dynamic cache
+let dynamicCache = 'site-dynamic-v1';
 
 // install service worker
 self.addEventListener('install', evt => {
@@ -46,7 +49,14 @@ self.addEventListener('fetch', evt => {
   evt.respondWith(
     caches.match(evt.request)
       .then(cacheRes => {
-        return cacheRes || fetch(evt.request);
+        return cacheRes || fetch(evt.request)
+          .then(fetchRes => {
+            return caches.open(dynamicCache)
+              .then(cache => {
+                cache.put(evt.request.url, fetchRes.clone())
+                return fetchRes;
+              })
+          })
       })
   )
 })
