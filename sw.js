@@ -3,6 +3,7 @@ const staticCacheName = 'site-static-v1';
 const assets = [
   '/',
   '/index.html',
+  '/pages/fallback.html',
   '/js/app.js',
   '/js/ui.js',
   '/js/materialize.min.js',
@@ -14,7 +15,7 @@ const assets = [
 ];
 
 // dynamic cache
-let dynamicCache = 'site-dynamic-v1';
+let dynamicCacheName = 'site-dynamic-v1';
 
 // install service worker
 self.addEventListener('install', evt => {
@@ -36,7 +37,7 @@ self.addEventListener('activate', evt => {
       .then(keys => {
         // console.log(keys)
         return Promise.all(keys
-          .filter(key => key !== staticCacheName)
+          .filter(key => key !== staticCacheName && key !== dynamicCacheName)
           .map(key => caches.delete(key))
         )
       })
@@ -51,12 +52,12 @@ self.addEventListener('fetch', evt => {
       .then(cacheRes => {
         return cacheRes || fetch(evt.request)
           .then(fetchRes => {
-            return caches.open(dynamicCache)
+            return caches.open(dynamicCacheName)
               .then(cache => {
                 cache.put(evt.request.url, fetchRes.clone())
                 return fetchRes;
               })
           })
-      })
+      }).catch(() => caches.match('/pages/fallback.html'))
   )
 })
