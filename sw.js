@@ -14,6 +14,21 @@ const assets = [
   'https://fonts.gstatic.com/s/materialicons/v48/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2'
 ];
 
+// cache size limit function - delete oldest item
+const limitCacheSize = (name, size) => {
+  caches.open(name)
+    .then(cache => {
+      cache.keys()
+        .then(keys => {
+          // awesome recursion - until the condition is true re-run the function
+          if (keys.length > size) {
+            cache.delete(keys[0])
+              .then(limitCacheSize(name, size))
+          }
+        })
+    })
+}
+
 // dynamic cache
 let dynamicCacheName = 'site-dynamic-v1';
 
@@ -55,6 +70,7 @@ self.addEventListener('fetch', evt => {
             return caches.open(dynamicCacheName)
               .then(cache => {
                 cache.put(evt.request.url, fetchRes.clone())
+                limitCacheSize(dynamicCacheName, 15)
                 return fetchRes;
               })
           })
