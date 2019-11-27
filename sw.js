@@ -1,5 +1,5 @@
 // app shell cache
-const staticCacheName = 'site-static-v1';
+const staticCacheName = 'site-static-v2';
 const assets = [
   '/',
   '/index.html',
@@ -13,6 +13,9 @@ const assets = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://fonts.gstatic.com/s/materialicons/v48/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2'
 ];
+
+// dynamic cache
+let dynamicCacheName = 'site-dynamic-v2';
 
 // cache size limit function - delete oldest item
 const limitCacheSize = (name, size) => {
@@ -28,9 +31,6 @@ const limitCacheSize = (name, size) => {
         })
     })
 }
-
-// dynamic cache
-let dynamicCacheName = 'site-dynamic-v1';
 
 // install service worker
 self.addEventListener('install', evt => {
@@ -62,24 +62,26 @@ self.addEventListener('activate', evt => {
 // tap into fetch events
 self.addEventListener('fetch', evt => {
   // console.log('fetch event')
-  // evt.respondWith(
-  //   caches.match(evt.request)
-  //     .then(cacheRes => {
-  //       return cacheRes || fetch(evt.request)
-  //         .then(fetchRes => {
-  //           return caches.open(dynamicCacheName)
-  //             .then(cache => {
-  //               cache.put(evt.request.url, fetchRes.clone())
-  //               limitCacheSize(dynamicCacheName, 15)
-  //               return fetchRes;
-  //             })
-  //         })
-  //     }).catch(() => {
-  //       if (evt.request.url.indexOf('.html') > -1) {
-  //         return caches.match('/pages/fallback.html');
-  //       }
-  //       // we could/should add a fallback for images too
-  //     })
-  // )
+  if (evt.request.url.indexOf('firestore.googleapis.com') === -1) {
+    evt.respondWith(
+      caches.match(evt.request)
+        .then(cacheRes => {
+          return cacheRes || fetch(evt.request)
+            .then(fetchRes => {
+              return caches.open(dynamicCacheName)
+                .then(cache => {
+                  cache.put(evt.request.url, fetchRes.clone())
+                  limitCacheSize(dynamicCacheName, 15)
+                  return fetchRes;
+                })
+            })
+        }).catch(() => {
+          if (evt.request.url.indexOf('.html') > -1) {
+            return caches.match('/pages/fallback.html');
+          }
+          // we could/should add a fallback for images too
+        })
+    )
+  }
 
 })
