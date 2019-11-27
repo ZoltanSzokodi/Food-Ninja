@@ -1,5 +1,6 @@
 // app shell cache
-const staticCacheName = 'site-static-v2';
+const staticCacheName = 'site-static-v4';
+let dynamicCacheName = 'site-dynamic-v5';
 const assets = [
   '/',
   '/index.html',
@@ -15,7 +16,6 @@ const assets = [
 ];
 
 // dynamic cache
-let dynamicCacheName = 'site-dynamic-v3';
 
 // cache size limit function - delete oldest item
 const limitCacheSize = (name, size) => {
