@@ -1,5 +1,5 @@
 // app shell cache
-const staticCacheName = 'site-static-v4';
+const staticCacheName = 'site-static-v5';
 let dynamicCacheName = 'site-dynamic-v5';
 const assets = [
   '/',
