@@ -62,23 +62,24 @@ self.addEventListener('activate', evt => {
 // tap into fetch events
 self.addEventListener('fetch', evt => {
   // console.log('fetch event')
-  evt.respondWith(
-    caches.match(evt.request)
-      .then(cacheRes => {
-        return cacheRes || fetch(evt.request)
-          .then(fetchRes => {
-            return caches.open(dynamicCacheName)
-              .then(cache => {
-                cache.put(evt.request.url, fetchRes.clone())
-                limitCacheSize(dynamicCacheName, 15)
-                return fetchRes;
-              })
-          })
-      }).catch(() => {
-        if (evt.request.url.indexOf('.html') > -1) {
-          return caches.match('/pages/fallback.html');
-        }
-        // we could/should add a fallback for images too
-      })
-  )
+  // evt.respondWith(
+  //   caches.match(evt.request)
+  //     .then(cacheRes => {
+  //       return cacheRes || fetch(evt.request)
+  //         .then(fetchRes => {
+  //           return caches.open(dynamicCacheName)
+  //             .then(cache => {
+  //               cache.put(evt.request.url, fetchRes.clone())
+  //               limitCacheSize(dynamicCacheName, 15)
+  //               return fetchRes;
+  //             })
+  //         })
+  //     }).catch(() => {
+  //       if (evt.request.url.indexOf('.html') > -1) {
+  //         return caches.match('/pages/fallback.html');
+  //       }
+  //       // we could/should add a fallback for images too
+  //     })
+  // )
+
 })
