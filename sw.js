@@ -15,7 +15,7 @@ const assets = [
 ];
 
 // dynamic cache
-let dynamicCacheName = 'site-dynamic-v2';
+let dynamicCacheName = 'site-dynamic-v3';
 
 // cache size limit function - delete oldest item
 const limitCacheSize = (name, size) => {
