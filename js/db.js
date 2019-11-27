@@ -4,7 +4,8 @@ db.collection('recipes').onSnapshot(snapshot => {
   snapshot.docChanges().forEach(change => {
     // console.log(change, change.doc.data(), change.doc.id)
     if (change.type === 'added') {
-      // add the document data to the ui
+      // add the document data to the ui - the function is declared in ui.js!
+      renderRecipe(change.doc.data(), change.doc.id)
     }
     if (change.type === 'removed') {
       // remove the document data from the ui
